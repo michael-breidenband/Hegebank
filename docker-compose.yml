@@ -1,10 +1,27 @@
-version: '2'
+version: '3.7'
 services:
   webserver:
-    image: phpstorm/php-73-apache-xdebug-27
+    build:
+        context: docker-files/webserver/.
     ports:
       - "80:80"
     volumes:
-      - ./:/var/www/html
+      - /home/docker/hegebank/:/var/www/html
     environment:
-      XDEBUG_CONFIG: remote_host=host.docker.internal
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+      XDEBUG_CONFIG: 'remote_host=host.docker.internal'
+  database-server:
+    build:
+      context: docker-files/database-server/.
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+    ports:
+      - "3306:3306"
+    volumes:
+     - Hegebank_DB_Volume:/var/lib/mysql
+volumes:
+  Hegebank_DB_Volume:
+
